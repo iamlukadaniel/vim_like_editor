@@ -1,5 +1,5 @@
 from controllers.base_mode import IMode
-from controllers.text_mode import TextMode
+from controllers.normal_mode import NormalMode
 from controllers.command_mode import CommandMode
 from controllers.input_mode import InputMode
 from controllers.search_mode import SearchMode
@@ -21,7 +21,7 @@ class Controller:
         self.text_view = TextView(tui)
         self.command_view = CommandView(tui)
         self.search_view = SearchView(tui)
-        self.text_mode = TextMode(self)
+        self.text_mode = NormalMode(self)
         self.command_mode = CommandMode(self)
         self.input_mode = InputMode(self)
         self.search_mode = SearchMode(self)

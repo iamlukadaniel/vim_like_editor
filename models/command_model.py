@@ -11,18 +11,23 @@ class CommandModel:
 
     def add_char(self, char: str):
         self.command_text += char
-        self.cursor.col += 1
+        self.move_cursor(1)
 
     def clear(self):
         self.command_text.clear()
         self.cursor.col = 0
 
-    def execute_command(self, controller):
-        command = self.command_text.c_str().strip()
-        if command == 'q':
-            controller.exit_program()
-        elif command.startswith('w'):
-            filename = command[1:].strip() or 'default.txt'
-            controller.text_model.save_file(filename)
-        # Implement other commands as per requirements
-        self.clear()
+    def delete_char_after_cursor(self):
+        current_line = self.command_text
+        if self.cursor.col < current_line.size():
+            current_line.erase(self.cursor.col, 1)
+
+    def delete_char_before_cursor(self):
+        current_line = self.command_text
+        if self.cursor.col > 0:
+            self.move_cursor(-1)
+            current_line.erase(self.cursor.col, 1)
+
+    def move_cursor(self, col_offset: int):
+        line_length = self.command_text.size()
+        self.cursor.col = max(0, min(line_length, self.cursor.col + col_offset))

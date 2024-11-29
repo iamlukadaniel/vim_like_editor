@@ -2,11 +2,7 @@ from MyString import MyString
 from models.cursor_model import CursorModel
 
 
-# TODO: 1. set_cursor_position
-#       2. find -> list of tuple(x,y)
-#       3. delete_character_after_cursor
-#       4. копирование строки/слова (мб лучше реализовать в command_model)
-#       5. справка по командам
+# TODO: 5. справка по командам
 class TextModel:
     def __init__(self):
         self.cursor = CursorModel()
@@ -31,16 +27,16 @@ class TextModel:
 
     def copy_line(self):
         if not self.lines:
-            return ""
+            return
         self.buffer = MyString(self.lines[self.cursor.row])
 
     def copy_word(self):
         if not self.lines:
-            return ""
+            return
         current_line = self.lines[self.cursor.row]
         start = self.cursor.col
         end = current_line.find(' ', start)
-        if end == -1:
+        if end == MyString.npos:
             end = current_line.size()
         self.buffer = MyString(current_line.substr(start, end - start))
 
@@ -48,9 +44,8 @@ class TextModel:
         if not self.lines:
             self.lines.append(MyString())
 
-        current_line = self.lines[self.cursor.row]
-
         for char in text:
+            current_line = self.lines[self.cursor.row]
             if char == '\n':
                 # Разделяем строку на две части
                 if self.cursor.col < current_line.size():
@@ -124,12 +119,11 @@ class TextModel:
 
     def move_to_next_match(self):
         if not self.matches:
-            return  # Если нет совпадений ничего не делаем
+            return
 
         current_pos = self.cursor.get_position()
         closest_match = None
 
-        # Ищем ближайшее совпадение которое идет после текущей позиции
         for match in self.matches:
             if match > current_pos:
                 closest_match = match
@@ -138,17 +132,15 @@ class TextModel:
         if closest_match:
             self.cursor.set_position(*closest_match)
         else:
-            # Если нет следующего совпадения идем к первому вхождению
             self.cursor.set_position(*self.matches[0])
 
     def move_to_previous_match(self):
         if not self.matches:
-            return  # Если нет совпадений ничего не делаем
+            return
 
         current_pos = self.cursor.get_position()
         closest_match = None
 
-        # Ищем ближайшее совпадение которое идет до текущей позиции
         for match in reversed(self.matches):
             if match < current_pos:
                 closest_match = match
@@ -157,5 +149,92 @@ class TextModel:
         if closest_match:
             self.cursor.set_position(*closest_match)
         else:
-            # Если нет предыдущего совпадения идем к последнему вхождению
             self.cursor.set_position(*self.matches[-1])
+
+    def go_to_line_start(self):
+        if not self.lines:
+            return
+        self.set_cursor_position(self.cursor.row, 0)
+
+    def go_to_line_end(self):
+        if not self.lines:
+            return
+        current_line = self.lines[self.cursor.row]
+        self.set_cursor_position(self.cursor.row, current_line.size() - 1)
+
+    def go_to_file_start(self):
+        if not self.lines:
+            return
+        self.set_cursor_position(0, 0)
+
+    def go_to_file_end(self):
+        if not self.lines:
+            return
+        last_line_idx = len(self.lines) - 1
+        last_line = self.lines[last_line_idx]
+        self.set_cursor_position(last_line_idx, last_line.size() - 1)
+
+    def go_to_line(self, line_idx: int):
+        if not self.lines:
+            return
+        self.set_cursor_position(line_idx, self.cursor.col)
+
+    def get_end_of_word(self) -> (int, int):
+        if not self.lines:
+            return None, None
+
+        current_line = self.lines[self.cursor.row]
+        col = self.cursor.col
+
+        while col < current_line.size() and current_line[col] == ' ':
+            col += 1
+
+        start_col = col
+        while col < current_line.size() and current_line[col] != ' ':
+            col += 1
+
+        if col >= current_line.size():
+            if self.cursor.row + 1 < len(self.lines):
+                return start_col, 0
+
+        return start_col, col
+
+    def get_start_of_word(self) -> (int, int):
+        if not self.lines:
+            return None, None
+
+        current_line = self.lines[self.cursor.row]
+        col = self.cursor.col
+
+        while col > 0 and current_line[col - 1] == ' ':
+            col -= 1
+
+        end_col = col
+        while col > 0 and current_line[col - 1] != ' ':
+            col -= 1
+
+        if col > 0 and current_line[col - 1] == ' ':
+            while col > 0 and current_line[col - 1] == ' ':
+                col -= 1
+            while col > 0 and current_line[col - 1] != ' ':
+                col -= 1
+
+        return col, end_col
+
+    def delete_word_under_cursor(self):
+        if not self.lines:
+            return
+
+        current_line = self.lines[self.cursor.row]
+
+        start_col, end_col = self.get_start_of_word()
+        _, next_word_start = self.get_end_of_word()
+
+        if start_col is None or end_col is None:
+            return
+
+        if start_col != end_col and current_line[end_col] == ' ':
+            while end_col < len(current_line) and current_line[end_col] == ' ':
+                end_col += 1
+
+        current_line.erase(start_col, end_col - start_col)

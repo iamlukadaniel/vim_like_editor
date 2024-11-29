@@ -7,5 +7,6 @@ class Keys:
     DOWN = 'down'
     LEFT = 'left'
     RIGHT = 'right'
+    TAB = 'tab'
     # Add other specific keys as needed
     CHAR = 'char'  # For regular character input

@@ -15,6 +15,8 @@ class InputMode(IMode):
             self.controller.text_model.delete_char_before_cursor()
         elif key == Keys.DELETE:
             self.controller.text_model.delete_char_after_cursor()
+        elif key == Keys.TAB:
+            self.controller.text_model.insert_text('\t')
         elif key == Keys.DOWN:
             self.controller.text_model.move_cursor(1, 0)
         elif key == Keys.UP:

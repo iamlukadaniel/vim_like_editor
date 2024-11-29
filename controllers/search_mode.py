@@ -7,8 +7,16 @@ class SearchMode(IMode):
         self.controller = controller
 
     def handle_input(self, key):
-        if key == Keys.ESCAPE:
+        if key == Keys.LEFT:
+            self.controller.search_model.move_cursor(-1)
+        elif key == Keys.RIGHT:
+            self.controller.search_model.move_cursor(1)
+        elif key == Keys.ESCAPE:
             self.controller.set_mode(self.controller.text_mode)
+        elif key == Keys.BACKSPACE:
+            self.controller.search_model.delete_char_before_cursor()
+        elif key == Keys.DELETE:
+            self.controller.search_model.delete_char_after_cursor()
         elif key == Keys.ENTER:
             self.controller.text_model.find_matches(self.controller.search_model.search_text.c_str())
             if self.controller.search_model.is_reversed:

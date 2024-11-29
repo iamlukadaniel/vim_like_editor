@@ -7,19 +7,36 @@ class CommandMode(IMode):
         self.controller = controller
 
     def handle_input(self, key):
-        if key == Keys.ESCAPE:
+        if key == Keys.LEFT:
+            self.controller.command_model.move_cursor(-1)
+        elif key == Keys.RIGHT:
+            self.controller.command_model.move_cursor(1)
+        elif key == Keys.ESCAPE:
             self.controller.command_model.clear()
             self.controller.set_mode(self.controller.text_mode)
         elif key == Keys.ENTER:
-            self.controller.command_model.execute_command(self.controller)
+            self.execute_command()
             self.controller.set_mode(self.controller.text_mode)
         elif key == Keys.BACKSPACE:
-            command_text = self.controller.command_model.command_text
-            if command_text.size() > 0:
-                command_text.erase(command_text.size() - 1, 1)
+            self.controller.command_model.delete_char_before_cursor()
+        elif key == Keys.DELETE:
+            self.controller.command_model.delete_char_after_cursor()
         elif isinstance(key, tuple) and key[0] == Keys.CHAR:
             char = key[1]
             self.controller.command_model.add_char(char)
+
+    def execute_command(self):
+        command = self.controller.command_model.command_text.c_str().strip()
+        if command == 'q':
+            self.controller.exit_program()
+        elif command.startswith('w'):
+            filename = command[1:].strip() or 'default.txt'
+            self.controller.text_model.save_file(filename)
+        elif command.startswith('o'):
+            filename = command[1:].strip() or 'default.txt'
+            self.controller.text_model.load_file(filename)
+        # Implement other commands as per requirements
+        self.controller.command_model.clear()
 
     def enter(self):
         self.controller.command_model.clear()

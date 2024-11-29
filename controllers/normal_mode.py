@@ -3,7 +3,7 @@ from utils.keys import Keys
 
 
 # TODO: придумать обработку команд по типу gg, 10G, yw, diw
-class TextMode(IMode):
+class NormalMode(IMode):
     def __init__(self, controller):
         self.controller = controller
         self.is_searching = False
@@ -25,9 +25,13 @@ class TextMode(IMode):
             elif key[1] == '/':
                 self.controller.search_model.is_reversed = False
                 self.controller.set_mode(self.controller.search_mode)
+                self.controller.search_model.is_dir_right = True
+                self.is_searching = True
             elif key[1] == '?':
                 self.controller.search_model.is_reversed = True
                 self.controller.set_mode(self.controller.search_mode)
+                self.controller.search_model.is_dir_right = False
+                self.is_searching = True
             elif key[1] == 'n':
                 if self.controller.search_model.is_reversed:
                     self.controller.search_model.is_dir_right = False

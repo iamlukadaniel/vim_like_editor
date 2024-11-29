@@ -10,7 +10,6 @@ class CursesAdapter(ITUI):
         self._initialize_key_map()
 
     def _initialize_key_map(self):
-        # Mapping of curses key codes to our own key constants
         self.key_map = {
             curses.KEY_EXIT: Keys.ESCAPE,
             curses.KEY_ENTER: Keys.ENTER,
@@ -20,6 +19,7 @@ class CursesAdapter(ITUI):
             curses.KEY_DOWN: Keys.DOWN,
             curses.KEY_LEFT: Keys.LEFT,
             curses.KEY_RIGHT: Keys.RIGHT,
+            9: Keys.TAB,
             27: Keys.ESCAPE,  # ESC key
             ord('\n'): Keys.ENTER,
         }
@@ -47,7 +47,7 @@ class CursesAdapter(ITUI):
         curses.use_default_colors()
         curses.curs_set(1)
         curses.meta(True)
-        curses.set_escdelay(25)  # To handle ESC key properly
+        curses.set_escdelay(25)
 
     def cleanup(self):
         if self.screen:
@@ -61,7 +61,6 @@ class CursesAdapter(ITUI):
         return self._map_key(key)
 
     def _map_key(self, key):
-        # Use the key_map dictionary to get the corresponding key constant
         mapped_key = self.key_map.get(key, None)
         return mapped_key
 
@@ -69,7 +68,7 @@ class CursesAdapter(ITUI):
         try:
             self.screen.addstr(y, x, text)
         except curses.error:
-            pass  # Ignore errors caused by drawing outside the screen
+            pass
 
     def refresh(self):
         self.screen.refresh()
