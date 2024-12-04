@@ -11,10 +11,6 @@ class ITUI(ABC):
         pass
 
     @abstractmethod
-    def get_key(self):
-        pass
-
-    @abstractmethod
     def draw(self, y: int, x: int, text: str):
         pass
 

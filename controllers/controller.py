@@ -10,11 +10,13 @@ from views.text_view import TextView
 from views.command_view import CommandView
 from views.search_view import SearchView
 from adapter.interface_tui import ITUI
+from adapter.interface_control import IControl
 
 
 class Controller:
-    def __init__(self, tui: ITUI):
+    def __init__(self, tui: ITUI, control: IControl):
         self.tui = tui
+        self.control = control
         self.text_model = TextModel()
         self.command_model = CommandModel()
         self.search_model = SearchModel()
@@ -36,10 +38,15 @@ class Controller:
     def exit_program(self):
         self.running = False
 
+    def update_viewport(self):
+        cursor_row, cursor_col = self.text_model.cursor.get_position()
+        self.text_view.scroll_to_cursor(cursor_row, cursor_col, self.text_model)
+
     def run(self):
         self.current_mode.enter()
         self.current_mode.update_view()
         while self.running:
-            key = self.tui.get_key()
+            key = self.control.get_key()
             self.current_mode.handle_input(key)
+            self.update_viewport()
             self.current_mode.update_view()

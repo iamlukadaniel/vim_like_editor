@@ -16,7 +16,7 @@ class InputMode(IMode):
         elif key == Keys.DELETE:
             self.controller.text_model.delete_char_after_cursor()
         elif key == Keys.TAB:
-            self.controller.text_model.insert_text('\t')
+            self.controller.text_model.insert_text('    ')
         elif key == Keys.DOWN:
             self.controller.text_model.move_cursor(1, 0)
         elif key == Keys.UP:
@@ -34,7 +34,7 @@ class InputMode(IMode):
 
     def update_view(self):
         self.controller.text_view.display(self.controller.text_model)
-        self.controller.text_view.display_status("-- INSERT MODE --")
+        self.controller.text_view.display_status("-- INSERT --")
         self.controller.text_view.update_cursor(
             self.controller.text_model.cursor.row, self.controller.text_model.cursor.col
         )

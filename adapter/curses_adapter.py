@@ -1,11 +1,12 @@
 import curses
 from adapter.interface_tui import ITUI
+from adapter.interface_control import IControl
 from utils.keys import Keys
 
 
-class CursesAdapter(ITUI):
+class CursesAdapter(ITUI, IControl):
     def __init__(self):
-        self.screen = None
+        self.screen = curses.initscr()
         self.key_map = {}
         self._initialize_key_map()
 
@@ -24,22 +25,11 @@ class CursesAdapter(ITUI):
             ord('\n'): Keys.ENTER,
         }
 
-        # Map ASCII values to characters for regular input
-        for code in range(32, 127):  # Printable ASCII range
+        for code in range(32, 127):
             char = chr(code)
             self.key_map[code] = (Keys.CHAR, char)
-        #
-        # # Map additional special keys
-        # additional_keys = {
-        #     ord(':'): Keys.COLON,
-        #     ord('i'): Keys.I,
-        #     # Map other specific keys as needed
-        # }
-
-        # self.key_map.update(additional_keys)
 
     def init(self):
-        self.screen = curses.initscr()
         curses.noecho()
         curses.cbreak()
         self.screen.keypad(True)
