@@ -1,13 +1,13 @@
 import curses
-from adapter.interface_tui import ITUI
-from adapter.interface_control import IControl
+from interfaces.adapter.base_tui import ITUI
+from interfaces.adapter.base_control import IControl
 from utils.keys import Keys
 
 
 class CursesAdapter(ITUI, IControl):
     def __init__(self):
         self.screen = curses.initscr()
-        self.key_map = {}
+        self.key_map: dict = {}
         self._initialize_key_map()
 
     def _initialize_key_map(self):

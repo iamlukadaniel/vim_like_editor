@@ -1,8 +1,8 @@
 # main.py
 from adapter.curses_adapter import CursesAdapter
-from controllers.controller import Controller
-from adapter.interface_tui import ITUI
-from adapter.interface_control import IControl
+from controller.controller import Controller
+from interfaces.adapter.base_tui import ITUI
+from interfaces.adapter.base_control import IControl
 
 
 def main():

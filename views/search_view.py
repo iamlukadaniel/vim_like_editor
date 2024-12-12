@@ -1,5 +1,6 @@
-from adapter.interface_tui import ITUI
+from interfaces.adapter.base_tui import ITUI
 from models.search_model import SearchModel
+from MyString import MyString
 
 
 class SearchView:
@@ -8,7 +9,8 @@ class SearchView:
 
     def display(self, model: SearchModel):
         max_y, max_x = self.tui.get_screen_size()
-        search_line = f"{'/' if model.is_dir_right else '?'}{model.search_text.c_str()}"
+        is_dir_right = model.is_dir_right()
+        search_line = f"{'/' if is_dir_right else '?'}{model.get_search_text().c_str()}"
         self.tui.draw(max_y - 1, 0, search_line.ljust(max_x))
         self.tui.refresh()
 
