@@ -137,7 +137,7 @@ class HelpMode(IMode):
 
         # Создаем новую модель для справки
         self.controller.text_model = TextModel()
-        self.controller.text_model.load_file('help.txt')
+        self.controller.text_model.load_file('utils/help.txt')
 
         # Отображаем файл помощи
         self.controller.text_view.display(self.controller.text_model)
